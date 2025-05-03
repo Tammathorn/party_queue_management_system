@@ -1,0 +1,52 @@
+[2025-05-03 23:54:02] SYSTEM: System started - Application initialization
+[2025-05-03 23:54:02] SYSTEM: System startup - Queue loaded from file
+[2025-05-03 23:54:13] SYSTEM: Manager login failed - Incorrect password
+[2025-05-03 23:54:17] SYSTEM: Invalid main menu input - partyowner'
+[2025-05-03 23:54:24] MANAGER: Logged in successfully
+[2025-05-03 23:54:30] MANAGER: Selected Open/Close Queue
+[2025-05-03 23:54:31] MANAGER: Queue opened
+[2025-05-03 23:54:33] MANAGER: Selected Set Queue Limit
+[2025-05-03 23:54:34] MANAGER: Queue limit changed from 5 to 5
+[2025-05-03 23:54:38] MANAGER: Viewed Customer Details
+[2025-05-03 23:54:42] MANAGER: Selected Assign Time for Queue
+[2025-05-03 23:54:45] MANAGER: Wait time changed from 5 to 500
+[2025-05-03 23:54:47] MANAGER: Viewed Customer Details
+[2025-05-03 23:54:51] MANAGER: Returned to main menu
+[2025-05-03 23:54:52] SYSTEM: Customer page accessed - Queue is open
+[2025-05-03 23:54:56] SYSTEM: Customer selected View My Details - 
+[2025-05-03 23:54:59] CUSTOMER: Viewed details - Name: David, VIP: No
+[2025-05-03 23:54:59] SYSTEM: Invalid integer input - 
+
+[2025-05-03 23:55:06] SYSTEM: Customer selected View My Details - 
+[2025-05-03 23:55:08] CUSTOMER: Viewed details - Name: David, VIP: No
+[2025-05-03 23:55:08] SYSTEM: Invalid integer input - 
+
+[2025-05-03 23:55:14] SYSTEM: Customer selected View My Details - 
+[2025-05-03 23:55:18] SYSTEM: Customer details not found - david
+[2025-05-03 23:55:18] SYSTEM: Invalid integer input - 
+
+[2025-05-03 23:55:22] SYSTEM: Customer selected View My Details - 
+[2025-05-03 23:55:26] CUSTOMER: Viewed details - Name: David, VIP: No
+[2025-05-03 23:55:26] SYSTEM: Invalid integer input - 
+
+[2025-05-03 23:55:33] SYSTEM: Customer selected Enter Queue - 
+[2025-05-03 23:55:37] SYSTEM: Invalid integer input - 
+
+[2025-05-03 23:55:42] SYSTEM: Failed VIP attempt - Jesus
+[2025-05-03 23:55:42] SYSTEM: Invalid integer input - 
+
+[2025-05-03 23:55:45] SYSTEM: Customer selected Enter Queue - 
+[2025-05-03 23:55:51] SYSTEM: Invalid integer input - 
+
+[2025-05-03 23:55:54] CUSTOMER: Added to queue - Name: Jesus, VIP: No
+[2025-05-03 23:55:56] SYSTEM: Customer returned to main menu - 
+[2025-05-03 23:55:58] SYSTEM: User returned to main menu - 
+[2025-05-04 00:18:51] SYSTEM: System started - Application initialization
+[2025-05-04 00:18:51] SYSTEM: System startup - Queue loaded from file
+[2025-05-04 00:18:58] MANAGER: Logged in successfully
+[2025-05-04 00:19:02] MANAGER: Selected Open/Close Queue
+[2025-05-04 00:19:03] MANAGER: Queue opened
+[2025-05-04 00:19:05] MANAGER: Viewed system logs
+[2025-05-04 00:19:18] MANAGER: Returned to main menu
+[2025-05-04 00:19:20] SYSTEM: Customer page accessed - Queue is open
+[2025-05-04 00:19:21] SYSTEM: Customer selected Enter Queue - 
