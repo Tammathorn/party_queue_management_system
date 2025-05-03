@@ -72,14 +72,15 @@ void clearInputBuffer() {
     while ((c = getchar()) != '\n' && c != EOF) {}
 }
 
-// Logging implementation
+// ===================================================== Logging Implementation System ==============================================
+// LoadTime
 void getCurrentTimeString(char *buffer, size_t bufferSize) {
     time_t now;
     time(&now);
     struct tm *tm_info = localtime(&now);
     strftime(buffer, bufferSize, "%Y-%m-%d %H:%M:%S", tm_info);
 }
-
+// Check Event
 void logEvent(const char *message) {
     FILE *logFile = fopen(LOG_FILE, "a");
     if (logFile == NULL) return;
@@ -90,26 +91,26 @@ void logEvent(const char *message) {
     fprintf(logFile, "[%s] %s\n", timestamp, message);
     fclose(logFile);
 }
-
+// Check Customer Action
 void logCustomerAction(const char *action, const char *name, int isVIP) {
     char message[100];
     snprintf(message, sizeof(message), "CUSTOMER: %s - Name: %s, VIP: %s", 
              action, name, isVIP ? "Yes" : "No");
     logEvent(message);
 }
-
+// Check System Action
 void logSystemAction(const char *action, const char *details) {
     char message[150];
     snprintf(message, sizeof(message), "SYSTEM: %s - %s", action, details);
     logEvent(message);
 }
-
+// Check Manager Action
 void logManagerAction(const char *action) {
     char message[100];
     snprintf(message, sizeof(message), "MANAGER: %s", action);
     logEvent(message);
 }
-
+// Show Log Function
 void viewLogs() {
     FILE *logFile = fopen(LOG_FILE, "r");
     if (logFile == NULL) {
@@ -124,6 +125,8 @@ void viewLogs() {
     }
     fclose(logFile);
 }
+//========================================================End of Logging Implementation System ================================================
+
 
 void pushRemovedCustomer(Customer *customer) {
     Stack *newNode = (Stack *)malloc(sizeof(Stack));
@@ -172,13 +175,15 @@ void removeExtraCustomers() {
     }
 }
 
+//===================================================== Display System ==============================================
+// Main Display
 void displayMenu() {
     printf("\n==== PARTY QUEUE SYSTEM ====\n");
     printf("1. Manager\n");
     printf("2. Customer\n");
     printf("Choose (1/2) or 'r' to return: ");
 }
-
+// (1) Manager Display
 void managerPage() {
     char pass[50];
     printf("Enter Manager Password: ");
@@ -237,7 +242,7 @@ void managerPage() {
         }
     }
 }
-
+// (2) Customer Display
 void customerPage() {
     if (!queueOpen) {
         printf("Queue is closed. Press 'r' to return.\n");
