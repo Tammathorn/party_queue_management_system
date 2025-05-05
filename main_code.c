@@ -430,7 +430,7 @@ int inputCustomer() {
     if (nameExists(name)) {
         printf("Name already exists. Please change your name.\n");
         logSystemAction("Duplicate name attempted", name);
-        return 0;  // Changed from return;
+        return 0;  
     }
     int status;
     while (1) {
@@ -446,7 +446,7 @@ int inputCustomer() {
         if (strcmp(vipPass, PASSWORD_VIP) != 0) {
             printf("Wrong VIP password. Returning to main menu.\n");
             logSystemAction("Failed VIP attempt", name);
-            return 0;  // Changed from return;
+            return 0;  
         }
         logSystemAction("VIP customer authenticated", name);
     }
@@ -574,7 +574,7 @@ void loadQueueFromCSV() {
     logSystemAction("System startup", "Queue loaded from file");
 }
 
-// Safe int input
+// Isolator Input
 int getIntInput() {
     char buffer[100];
     int num;
