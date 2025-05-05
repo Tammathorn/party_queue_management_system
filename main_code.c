@@ -21,7 +21,9 @@ Customer *head = NULL;
 int queueOpen = 0;
 int queueLimit = 5;
 int customerCount = 0;
-int timePerCustomer = 5;
+int vipTimePerCustomer = 5;
+int normalTimePerCustomer = 5;
+
 
 typedef struct Stack {
     Customer *customer;
@@ -40,7 +42,7 @@ void openCloseQueue();
 void viewCustomerDetails();
 void assignTime();
 void removeUser();
-void inputCustomer();
+int inputCustomer();
 void viewOwnDetails();
 void addCustomer(char name[], int isVIP);
 int nameExists(char name[]);
@@ -181,7 +183,8 @@ void displayMenu() {
     printf("\n==== PARTY QUEUE SYSTEM ====\n");
     printf("1. Manager\n");
     printf("2. Customer\n");
-    printf("Choose (1/2) or 'r' to return: ");
+    printf("3. Exiting Program\n");
+    printf("Choose (1/2) or '3' to exiting: ");
 }
 // (1) Manager Display
 void managerPage() {
@@ -261,10 +264,12 @@ void customerPage() {
         printf("Enter your choice: ");
         choice = getIntInput();
         switch(choice) {
+
             case 1: 
-                logSystemAction("Customer selected Enter Queue", "");
-                inputCustomer(); 
-                break;
+            logSystemAction("Customer selected Enter Queue", "");
+            if (inputCustomer()) {
+            }
+            break;
             case 2: 
                 logSystemAction("Customer selected View My Details", "");
                 viewOwnDetails(); 
@@ -306,9 +311,33 @@ void openCloseQueue() {
         printf("Enter your choice (1 or 2): ");
         choice = getIntInput();
         if (choice == 1) {
+            printf("Enter wait time for NORMAL customers: ");
+            int normalTime = getIntInput();
+            printf("Enter wait time for VIP customers: ");
+            int vipTime = getIntInput();
+
+            if (normalTime <= 0 || vipTime <= 0) {
+                printf("Invalid wait time. Must be a positive number. Queue not opened.\n");
+                logSystemAction("Invalid wait time input when opening queue", "");
+                return;
+            }
+
+            normalTimePerCustomer = normalTime;
+            vipTimePerCustomer = vipTime;
             queueOpen = 1;
+
             printf("Queue is now Open.\n");
-            logManagerAction("Queue opened");
+            char msg[100];
+            snprintf(msg, sizeof(msg), "Queue opened with wait time - Normal: %d, VIP: %d", normalTimePerCustomer, vipTimePerCustomer);
+            logManagerAction(msg);
+
+            // Update current customers' wait time
+            Customer *temp = head;
+            while (temp != NULL) {
+                temp->waitTime = temp->isVIP ? vipTimePerCustomer : normalTimePerCustomer;
+                temp = temp->next;
+            }
+            rewriteCSV();
             break;
         } else if (choice == 2) {
             queueOpen = 0;
@@ -323,6 +352,8 @@ void openCloseQueue() {
 }
 
 
+
+
 void viewCustomerDetails() {
     Customer *temp = head;
     printf("\nQueue Number | VIP | Name | Wait Time\n");
@@ -334,64 +365,72 @@ void viewCustomerDetails() {
 }
 
 void assignTime() {
-    printf("Enter wait time per customer: ");
-    int newTime = getIntInput();
-    if (newTime <= 0) {
+    printf("Enter wait time for NORMAL customers: ");
+    int normalTime = getIntInput();
+    printf("Enter wait time for VIP customers: ");
+    int vipTime = getIntInput();
+
+    if (normalTime <= 0 || vipTime <= 0) {
         printf("Invalid time. Try again.\n");
         logSystemAction("Invalid wait time attempted", "Value <= 0");
         return;
     }
-    
-    char message[50];
-    snprintf(message, sizeof(message), "Wait time changed from %d to %d", timePerCustomer, newTime);
+
+    char message[100];
+    snprintf(message, sizeof(message), "Wait time changed - Normal: %d, VIP: %d", normalTime, vipTime);
     logManagerAction(message);
-    
-    timePerCustomer = newTime;
+
+    normalTimePerCustomer = normalTime;
+    vipTimePerCustomer = vipTime;
+
     Customer *temp = head;
     while (temp != NULL) {
-        temp->waitTime = timePerCustomer;
+        temp->waitTime = temp->isVIP ? vipTimePerCustomer : normalTimePerCustomer;
         temp = temp->next;
     }
     rewriteCSV();
 }
 
+
 void removeUser() {
     char name[NAME_LENGTH];
     printf("Enter customer name to remove: ");
     scanf("%s", name);
+    clearInputBuffer();
+
     Customer *temp = head, *prev = NULL;
     while (temp != NULL) {
         if (strcmp(temp->name, name) == 0) {
-            if (prev == NULL) head = temp->next;
-            else prev->next = temp->next;
-            pushRemovedCustomer(temp);
-            free(temp);
+            if (prev == NULL) {
+                head = temp->next;
+            } else {
+                prev->next = temp->next;
+            }
             customerCount--;
+
+            pushRemovedCustomer(temp);
             rewriteCSV();
-            
-            char message[100];
-            snprintf(message, sizeof(message), "Removed customer: %s", name);
-            logManagerAction(message);
-            
-            printf("Customer removed.\n");
-            viewCustomerDetails();
+            printf("Customer %s removed from queue.\n", name);
+            logManagerAction("Customer removed via manager menu");
             return;
         }
         prev = temp;
         temp = temp->next;
     }
+
     printf("Customer not found.\n");
-    logSystemAction("Customer removal failed", "Customer not found");
+    logSystemAction("Manager attempted to remove non-existent customer", name);
 }
 
-void inputCustomer() {
+
+int inputCustomer() {
     char name[NAME_LENGTH];
     printf("Enter your name: ");
     scanf("%s", name);
     if (nameExists(name)) {
         printf("Name already exists. Please change your name.\n");
         logSystemAction("Duplicate name attempted", name);
-        return;
+        return 0;  // Changed from return;
     }
     int status;
     while (1) {
@@ -407,11 +446,12 @@ void inputCustomer() {
         if (strcmp(vipPass, PASSWORD_VIP) != 0) {
             printf("Wrong VIP password. Returning to main menu.\n");
             logSystemAction("Failed VIP attempt", name);
-            return;
+            return 0;  // Changed from return;
         }
         logSystemAction("VIP customer authenticated", name);
     }
     addCustomer(name, status);
+    return 1;
 }
 
 void addCustomer(char name[], int isVIP) {
@@ -419,7 +459,7 @@ void addCustomer(char name[], int isVIP) {
     strcpy(newCustomer->name, name);
     newCustomer->isVIP = isVIP;
     newCustomer->queueNumber = ++customerCount;
-    newCustomer->waitTime = timePerCustomer;
+    newCustomer->waitTime = isVIP ? vipTimePerCustomer : normalTimePerCustomer;
     newCustomer->next = NULL;
 
     if (head == NULL || (isVIP && !head->isVIP)) {
@@ -552,17 +592,24 @@ int getIntInput() {
 
 int main() {
     logSystemAction("System started", "Application initialization");
-    loadQueueFromCSV(); // CSV
+    loadQueueFromCSV();
     char choice[5];
     while (1) {
         displayMenu();
         scanf("%s", choice);
+        clearInputBuffer();
+        
         if (strcmp(choice, "r") == 0) {
             logSystemAction("User returned to main menu", "");
             continue;
         }
         else if (strcmp(choice, "1") == 0) managerPage();
         else if (strcmp(choice, "2") == 0) customerPage();
+        else if (strcmp(choice, "3") == 0) {
+            printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!Exiting Program!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+            logSystemAction("System shutdown", "Application terminated");
+            break;
+        }
         else {
             printf("Invalid input.\n");
             logSystemAction("Invalid main menu input", choice);
@@ -570,5 +617,4 @@ int main() {
 
         countdownQueue();
     }
-    return 0;
-}
+}    
